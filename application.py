@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash
+    abort, render_template, flash
 from contextlib import closing
 
 # configuration
@@ -10,12 +10,13 @@ SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
 
-
 app = Flask(__name__)
 app.config.from_object(__name__)
 
+
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
+
 
 def init_db():
     with closing(connect_db()) as db:
@@ -76,11 +77,19 @@ def logout():
     return redirect(url_for('show_entries'))
 
 
-@app.route("/") # We then use the route() decorator to tell Flask what URL should trigger our function.
+@app.route('/cv')
+def cv():
+    return render_template('cv.html')
+
+
+@app.route("/")  # We then use the route() decorator to tell Flask what URL should trigger our function.
 def hello():
+    # The function is given a name which is also used to generate URLs for that particular function, and returns the
+    #  message we want to display in the user’s browser.
     return "Hello World!"
-    # The function is given a name which is also used to generate URLs for that particular function, and returns the message we want to display in the user’s browser.
 
 if __name__ == "__main__":
     app.run()
-    # Finally we use the run() function to run the local server with our application. The if __name__ == '__main__': makes sure the server only runs if the script is executed directly from the Python interpreter and not used as an imported module.
+    # Finally we use the run() function to run the local server with our application. The if __name__ == '__main__':
+    # makes sure the server only runs if the script is executed directly from the Python interpreter and not used as an
+    # imported module.
