@@ -5,6 +5,7 @@
     <h1>Patrick Tesh</h1>
     <div class=metanav>
         <a href="{{ url_for('cv') }}">cv</a>
+        <a href="{{ url_for('contact') }}">contact</a>
         {% if not session.logged_in %}
         <a href="{{ url_for('login') }}">log in</a>
         {% else %}

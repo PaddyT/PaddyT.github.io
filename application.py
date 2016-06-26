@@ -1,17 +1,27 @@
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
-    abort, render_template, flash
+    abort, render_template, flash, send_file
 from contextlib import closing
+from flask_mail import Mail, Message
 
 # configuration
 DATABASE = '/tmp/mydb.db'
-DEBUG = True
+DEBUG = False
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
+# MAIL_SERVER = 'smtp.virgin.net'
+# DEBUG = True,
+# MAIL_SERVER = 'smtp.gmail.com',
+# MAIL_PORT = 465,
+# MAIL_USE_TLS = False,
+# MAIL_USE_SSL = True,
+# MAIL_USERNAME = 'my_username@gmail.com',
+# MAIL_PASSWORD = 'my_password',
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+mail = Mail(app)
 
 
 def connect_db():
@@ -79,14 +89,23 @@ def logout():
 
 @app.route('/cv')
 def cv():
-    return render_template('cv.html')
+    return send_file('assets/PTeshCV.pdf')
 
 
-@app.route("/")  # We then use the route() decorator to tell Flask what URL should trigger our function.
-def hello():
-    # The function is given a name which is also used to generate URLs for that particular function, and returns the
-    #  message we want to display in the user’s browser.
-    return "Hello World!"
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+
+@app.route('/send', methods=['POST'])
+def sender():
+    txt = request.form['message']
+    sdr = request.form['email']
+    msg = Message(txt, sender=sdr, recipients=["patrick_tesh@outlook.com"])
+    mail.send(msg)
+    flash('Message sent!')
+    return redirect(url_for('contact'))
+
 
 if __name__ == "__main__":
     app.run()
