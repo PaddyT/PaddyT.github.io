@@ -4,12 +4,14 @@
 <div class=page>
     <h1>Patrick Tesh</h1>
     <div class=metanav>
-        <a href="{{ url_for('cv') }}">cv</a>
-        <a href="{{ url_for('contact') }}">contact</a>
+        <a href="{{ url_for('front_page') }}">Home</a>
+        <a href="{{ url_for('blog') }}">Blog</a>
+        <a href="{{ url_for('cv') }}">CV</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
         {% if not session.logged_in %}
-        <a href="{{ url_for('login') }}">log in</a>
+        <a href="{{ url_for('login') }}">Log in</a>
         {% else %}
-        <a href="{{ url_for('logout') }}">log out</a>
+        <a href="{{ url_for('logout') }}">Log out</a>
         {% endif %}
     </div>
     {% for message in get_flashed_messages() %}

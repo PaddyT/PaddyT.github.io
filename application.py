@@ -2,8 +2,8 @@ import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash, send_file
 from contextlib import closing
-# from flask.ext.mail import Mail, Message
 from flask_mail import Mail, Message
+import re
 
 # configuration
 DATABASE = '/tmp/mydb.db'
@@ -13,6 +13,8 @@ USERNAME = 'admin'
 PASSWORD = 'default'
 MAIL_SERVER = 'smtp.virgin.net'
 MAIL_DEFAULT_SENDER = 'donotreply@patricktesh.com'
+
+EMAIL_REGEX = re.compile(r'[\w]+@[.\w]+')
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -26,6 +28,7 @@ TODO:   BOOTSTRAP
         SOCIAL MEDIA LINKS
 
 """
+
 
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
@@ -50,11 +53,16 @@ def teardown_request(exception):
         db.close()
 
 
-@app.route('/')
-def show_entries():
+@app.route('/blog')
+def blog():
     cur = g.db.execute('select title, text from entries order by id desc')
     entries = [dict(title=row[0], text=row[1]) for row in cur.fetchall()]
     return render_template('show_entries.html', entries=entries)
+
+
+@app.route('/')
+def front_page():
+    return render_template('layout.html')
 
 
 @app.route('/add', methods=['POST'])
@@ -79,7 +87,7 @@ def login():
         else:
             session['logged_in'] = True
             flash('You were logged in')
-            return redirect(url_for('show_entries'))
+            return redirect(url_for('front_page'))
     return render_template('login.html', error=error)
 
 
@@ -87,7 +95,7 @@ def login():
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
-    return redirect(url_for('show_entries'))
+    return redirect(url_for('front_page'))
 
 
 @app.route('/cv')
@@ -97,20 +105,24 @@ def cv():
 
 @app.route('/contact')
 def contact():
-    return render_template('contact.html')
+    return render_template('contact.html', error=None)
 
 
 @app.route('/send', methods=['POST'])
 def sender():
+    error = None
     txt = request.form['message']
     email = request.form['email']
-    msg = Message(subject='Inquiry',
-                  sender=email,
-                  recipients=["patrick_tesh@outlook.com"],
-                  body=txt)
-    mail.send(msg)
-    flash('Message sent!')
-    return redirect(url_for('contact'))
+    if EMAIL_REGEX.fullmatch(email):
+        msg = Message(subject='Inquiry',
+                      sender=email,
+                      recipients=["patrick_tesh@outlook.com"],
+                      body=txt)
+        mail.send(msg)
+        flash('Message sent!')
+    else:
+        error = 'Invalid Email'
+    return render_template('contact.html', error=error)
 
 
 if __name__ == "__main__":
