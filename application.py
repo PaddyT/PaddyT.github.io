@@ -18,6 +18,14 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 mail = Mail(app)
 
+"""
+TODO:   BOOTSTRAP
+        REMOVE LOGIN
+        FRONT PAGE WITH BIO
+        BLOG PAGE
+        SOCIAL MEDIA LINKS
+
+"""
 
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
