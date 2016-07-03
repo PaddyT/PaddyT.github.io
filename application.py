@@ -2,6 +2,7 @@ import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash, send_file
 from contextlib import closing
+# from flask.ext.mail import Mail, Message
 from flask_mail import Mail, Message
 
 # configuration
@@ -10,14 +11,8 @@ DEBUG = False
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
-# MAIL_SERVER = 'smtp.virgin.net'
-# DEBUG = True,
-# MAIL_SERVER = 'smtp.gmail.com',
-# MAIL_PORT = 465,
-# MAIL_USE_TLS = False,
-# MAIL_USE_SSL = True,
-# MAIL_USERNAME = 'my_username@gmail.com',
-# MAIL_PASSWORD = 'my_password',
+MAIL_SERVER = 'smtp.virgin.net'
+MAIL_DEFAULT_SENDER = 'donotreply@patricktesh.com'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -100,14 +95,18 @@ def contact():
 @app.route('/send', methods=['POST'])
 def sender():
     txt = request.form['message']
-    sdr = request.form['email']
-    msg = Message(txt, sender=sdr, recipients=["patrick_tesh@outlook.com"])
+    email = request.form['email']
+    msg = Message(subject='Inquiry',
+                  sender=email,
+                  recipients=["patrick_tesh@outlook.com"],
+                  body=txt)
     mail.send(msg)
     flash('Message sent!')
     return redirect(url_for('contact'))
 
 
 if __name__ == "__main__":
+    init_db()
     app.run()
     # Finally we use the run() function to run the local server with our application. The if __name__ == '__main__':
     # makes sure the server only runs if the script is executed directly from the Python interpreter and not used as an
