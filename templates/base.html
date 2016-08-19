@@ -1,0 +1,24 @@
+{%- extends "bootstrap/base.html" %}
+
+{% block title %}
+Patrick Tesh
+{% endblock %}
+
+{% import "bootstrap/fixes.html" as fixes %}
+
+{% block head %}
+{{super()}}
+{{fixes.ie8()}}
+{%- endblock %}
+
+{% block styles -%}
+{{super()}}
+{% endblock %}
+
+{% block scripts -%}
+{{super()}}
+{% endblock %}
+
+{% block navbar %}
+{{nav.navigation.render()}}
+{% endblock %}
