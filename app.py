@@ -1,36 +1,40 @@
-from flask import Flask, request, render_template, flash, send_file, redirect, url_for
+"""
+app.py
+"""
+import re
+
+from flask import Flask, flash, render_template, request, redirect, \
+    send_file, url_for
 from flask_mail import Mail, Message
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View
-import re
 
-# Config
-SECRET_KEY = 'none'
+
+# Debug flag
 DEBUG = False
+
+# Flask Mail
 MAIL_SERVER = 'smtp.virgin.net'
 MAIL_DEFAULT_SENDER = 'donotreply@patricktesh.com'
-
 EMAIL_REGEX = re.compile(r'[\w]+@[.\w]+')
 
+# Create app
 app = Flask(__name__)
 app.config.from_object(__name__)
+
+# Flask Mail
 mail = Mail(app)
+
+# Flask Bootstrap
 bootstrap = Bootstrap(app)
+
+# Naviagtion bar
 nav = Nav(app)
-
-"""
-TODO:   FRONT PAGE WITH BIO
-        BLOG PAGE
-        SOCIAL MEDIA LINKS
-"""
-
 nav.register_element('navigation',
                      Navbar(View('Home', 'front'),
                             View('Contact', 'contact'),
-                            View('CV', 'cv')
-                            )
-                     )
+                            View('CV', 'cv')))
 
 
 @app.route('/')
@@ -56,7 +60,7 @@ def sender():
     if EMAIL_REGEX.fullmatch(email):
         msg = Message(subject='Submission',
                       sender='noreply@PaddyT.github.io',
-                      recipients=['patrick_tesh@outlook.com'],
+                      recipients=['ipatrick_tesh@outlook.com'],
                       body=' - '.join([email, txt]))
         mail.send(msg)
         flash('Message sent!')
@@ -67,4 +71,5 @@ def sender():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='127.0.0.1',
+            port=8080)
