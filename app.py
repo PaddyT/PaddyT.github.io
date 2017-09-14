@@ -14,9 +14,11 @@ from flask_nav.elements import Navbar, View
 # Debug flag
 DEBUG = False
 
+SECRET_KEY = 'none'
+
 # Flask Mail
 MAIL_SERVER = 'smtp.virgin.net'
-MAIL_DEFAULT_SENDER = 'donotreply@patricktesh.com'
+MAIL_DEFAULT_SENDER = 'donotreply@PaddyT.github.io'
 EMAIL_REGEX = re.compile(r'[\w]+@[.\w]+')
 
 # Create app
@@ -49,7 +51,8 @@ def contact(error=None):
 
 @app.route('/cv')
 def cv():
-    return send_file('assets/PTeshCV.pdf')
+    return send_file('assets/PTeshCV.pdf',
+                     )
 
 
 @app.route('/send', methods=['POST'])
@@ -57,11 +60,12 @@ def sender():
     error = None
     txt = request.form['message']
     email = request.form['email']
+    print(txt, email)
     if EMAIL_REGEX.fullmatch(email):
-        msg = Message(subject='Submission',
-                      sender='noreply@PaddyT.github.io',
-                      recipients=['ipatrick_tesh@outlook.com'],
-                      body=' - '.join([email, txt]))
+        msg = Message(subject='Contact',
+                      sender=email,
+                      recipients=['patrickjamestesh@gmail.com'],
+                      body=txt)
         mail.send(msg)
         flash('Message sent!')
     else:
