@@ -35,6 +35,7 @@ bootstrap = Bootstrap(app)
 nav = Nav(app)
 nav.register_element('navigation',
                      Navbar(View('Home', 'front'),
+#                            View('Sign Up', 'signup'),
                             View('Contact', 'contact'),
                             View('CV', 'cv')))
 
@@ -42,6 +43,11 @@ nav.register_element('navigation',
 @app.route('/')
 def front():
     return render_template('front.html')
+
+
+@app.route('/signup')
+def signup(error=None):
+    return render_template('signup.html', error=error)
 
 
 @app.route('/contact')
