@@ -1,5 +1,0 @@
-gunicorn
-flask
-flask-bootstrap
-flask-mail
-flask-nav
