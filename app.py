@@ -9,7 +9,7 @@ from flask_mail import Mail, Message
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View
-
+from flask_socketio import SocketIO, emit
 
 # Debug flag
 DEBUG = False
@@ -30,6 +30,9 @@ mail = Mail(app)
 
 # Flask Bootstrap
 bootstrap = Bootstrap(app)
+
+# SocektIO
+socketio = SocketIO(app)
 
 # Naviagtion bar
 nav = Nav(app)
@@ -80,6 +83,31 @@ def sender():
     return redirect(url_for('contact', error=error))
 
 
+@socketio.on('my event', namespace='/test')
+def test_message(message):
+        emit('my response',
+             {'data': message['data']})
+
+
+@socketio.on('my broadcast event', namespace='/test')
+def test_broadcast_message(message):
+    emit('my response',
+         {'data': message['data']},
+         broadcast=True)
+
+
+@socketio.on('connect', namespace='/test')
+def test_connect():
+    emit('my response',
+         {'data': 'Connected'})
+
+
+@socketio.on('disconnect', namespace='/test')
+def test_disconnect():
+    print('Client disconnected')
+
+
 if __name__ == "__main__":
-    app.run(host='127.0.0.1',
-            port=8080)
+    socketio.run(app,
+                 host='127.0.0.1',
+                 port=8080)
